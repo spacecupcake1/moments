@@ -22,6 +22,12 @@ import {
 import { EntriesService } from 'src/services/entries.service';
 import { Entry } from 'src/app/data/entry';
 import { Location } from 'src/app/data/location';
+import { 
+  cameraOutline, 
+  micOutline, 
+  imageOutline 
+} from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 
 @Component({
   selector: 'app-new-entry',
@@ -57,7 +63,14 @@ export class NewEntryPage {
   constructor(
     private entriesService: EntriesService,
     private router: Router
-  ) {}
+  ) {
+    // Register the icons
+    addIcons({
+      'camera': cameraOutline,
+      'mic': micOutline,
+      'image': imageOutline
+    });
+  }
 
   async addMediaFile(type: 'image' | 'audio') {
     // Here you would implement file selection/capture
