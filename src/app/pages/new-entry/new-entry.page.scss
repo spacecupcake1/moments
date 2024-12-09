@@ -1,25 +1,25 @@
 ion-content {
     --background: #f4f4f4;
   }
-  
+
   ion-list {
     background: transparent;
     padding: 0;
     margin-bottom: 16px;
   }
-  
+
   ion-item {
     --padding-start: 0;
     --background: transparent;
     --border-color: rgba(0, 0, 0, 0.1);
     margin-bottom: 16px;
   }
-  
+
   ion-label {
     color: var(--ion-color-medium);
     font-weight: 500;
   }
-  
+
   ion-textarea {
     --background: #ffffff;
     --padding-top: 8px;
@@ -29,7 +29,7 @@ ion-content {
     margin-top: 8px;
     border-radius: 4px;
   }
-  
+
   ion-input {
     --background: #ffffff;
     --padding-start: 8px;
@@ -37,7 +37,7 @@ ion-content {
     margin-top: 8px;
     border-radius: 4px;
   }
-  
+
   .media-buttons {
     display: flex;
     gap: 8px;
@@ -47,10 +47,28 @@ ion-content {
   .location-container {
     width: 100%;
     padding: 8px 0;
-    
+
     ion-text {
       display: block;
       margin-bottom: 8px;
       color: var(--ion-color-medium);
     }
   }
+
+  .recording-status {
+  text-align: center;
+  margin: 10px 0;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}

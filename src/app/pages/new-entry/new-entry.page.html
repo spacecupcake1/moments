@@ -61,6 +61,23 @@
       </ion-button>
     </div>
 
+    <div class="media-buttons ion-padding-horizontal">
+
+      <ion-button
+        expand="full"
+        (click)="toggleRecording()"
+        [color]="isRecording ? 'danger' : 'primary'"
+        class="ion-margin-bottom">
+        <ion-icon [name]="isRecording ? 'stop-circle' : 'mic'" slot="start"></ion-icon>
+        {{ isRecording ? 'Stop Recording' : 'Record Voice Message' }}
+      </ion-button>
+
+      <!-- Recording status -->
+      <div *ngIf="isRecording" class="recording-status">
+        <ion-text color="danger">Recording: {{ recordingDuration }}s</ion-text>
+      </div>
+    </div>
+
     <!-- Media Files Preview -->
     <ion-list *ngIf="mediaFiles.length > 0">
       <ion-item *ngFor="let file of mediaFiles; let i = index">

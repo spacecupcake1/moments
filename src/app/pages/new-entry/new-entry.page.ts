@@ -24,12 +24,15 @@ import {
   IonToolbar,
   ToastController
 } from '@ionic/angular/standalone';
+import { VoiceRecorder } from 'capacitor-voice-recorder';
 import { addIcons } from 'ionicons';
 import {
   cameraOutline,
   checkmarkCircleOutline,
   imageOutline,
   locationOutline,
+  micOutline,
+  stopCircleOutline,
   trashOutline,
   warningOutline
 } from 'ionicons/icons';
@@ -70,6 +73,9 @@ export class NewEntryPage {
   mediaFiles: MediaFile[] = [];
   moodOptions = ['Happy', 'Sad', 'Excited', 'Thoughtful', 'Anxious', 'Calm'];
   isGettingLocation = false;
+  isRecording = false;
+  recordingDuration = 0;
+  recordingInterval: any;
 
   constructor(
     private entriesService: EntriesService,
@@ -77,12 +83,12 @@ export class NewEntryPage {
     private toastController: ToastController,
     private alertController: AlertController
   ) {
-    addIcons({'camera':cameraOutline,'image':imageOutline,'locate':locationOutline,'trash':trashOutline,'checkmarkCircle':checkmarkCircleOutline,'warning':warningOutline});
+    addIcons({'camera':cameraOutline,'image':imageOutline,'locate':locationOutline,'trash':trashOutline,'checkmarkCircle':checkmarkCircleOutline,'warning':warningOutline,'mic':micOutline,'stopCircle':stopCircleOutline});
   }
 
-  async showSuccessToast() {
+  async showSuccessToast(message: string = 'Entry saved successfully!') {
     const toast = await this.toastController.create({
-      message: 'Entry saved successfully!',
+      message: message,
       duration: 2000,
       position: 'bottom',
       color: 'success',
@@ -240,6 +246,97 @@ export class NewEntryPage {
     } catch (error) {
       console.error('Error choosing picture:', error);
       await this.showErrorAlert(error);
+    }
+  }
+
+  async checkAudioPermissions(): Promise<boolean> {
+    try {
+      const { value } = await VoiceRecorder.hasAudioRecordingPermission();
+      if (!value) {
+        const { value: permissionValue } = await VoiceRecorder.requestAudioRecordingPermission();
+        return permissionValue;
+      }
+      return value;
+    } catch (error) {
+      console.error('Error checking audio permissions:', error);
+      return false;
+    }
+  }
+
+  async toggleRecording() {
+    if (!this.isRecording) {
+      // Start recording
+      const hasPermission = await this.checkAudioPermissions();
+      if (!hasPermission) {
+        await this.showErrorAlert('Microphone permission is required to record audio.');
+        return;
+      }
+
+      try {
+        await VoiceRecorder.startRecording();
+        this.isRecording = true;
+        this.recordingDuration = 0;
+
+        // Update duration every second
+        this.recordingInterval = setInterval(() => {
+          this.recordingDuration++;
+        }, 1000);
+
+      } catch (error) {
+        console.error('Error starting recording:', error);
+        await this.showErrorAlert(error);
+      }
+    } else {
+      // Stop recording
+      try {
+        const { value } = await VoiceRecorder.stopRecording();
+        this.isRecording = false;
+        clearInterval(this.recordingInterval);
+
+        // Convert base64 to File
+        const base64Sound = value.recordDataBase64;
+
+        const byteCharacters = atob(base64Sound);
+        const byteArrays = [];
+        for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+          const slice = byteCharacters.slice(offset, offset + 512);
+          const byteNumbers = new Array(slice.length);
+          for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+          }
+          byteArrays.push(new Uint8Array(byteNumbers));
+        }
+
+        // Use WAV format for better compatibility
+        const blob = new Blob(byteArrays, { type: 'audio/wav' });
+
+        const timestamp = new Date().getTime();
+        const file = new File([blob], `audio_${timestamp}.wav`, {
+          type: 'audio/wav'
+        });
+
+        // Create media file
+        const mediaFile = new MediaFile();
+        mediaFile.file_type = 'audio';
+        mediaFile.file_path = file.name;
+        mediaFile.tempFile = file;
+        mediaFile.is_synced = false;
+
+        this.mediaFiles.push(mediaFile);
+        await this.showSuccessToast('Voice message recorded successfully');
+
+      } catch (error) {
+        console.error('Error stopping recording:', error);
+        await this.showErrorAlert(error);
+      }
+    }
+  }
+
+  async ionViewWillLeave() {
+    if (this.isRecording) {
+      await VoiceRecorder.stopRecording();
+      this.isRecording = false;
+      clearInterval(this.recordingInterval);
     }
   }
 

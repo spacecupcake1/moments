@@ -33,6 +33,7 @@
     "@capacitor/status-bar": "6.0.2",
     "@ionic/angular": "^8.0.0",
     "@supabase/supabase-js": "^2.47.2",
+    "capacitor-voice-recorder": "^6.0.3",
     "ionicons": "^7.2.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
