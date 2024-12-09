@@ -71,13 +71,7 @@ export class NewEntryPage {
       private entriesService: EntriesService,
       private router: Router
   ) {
-    addIcons({
-      'camera': cameraOutline,
-      'mic': micOutline,
-      'image': imageOutline,
-      'locate': locationOutline,
-      'trash': trashOutline
-    });
+    addIcons({'camera':cameraOutline,'mic':micOutline,'image':imageOutline,'locate':locationOutline,'trash':trashOutline});
   }
 
   async getCurrentLocation() {
@@ -145,26 +139,30 @@ export class NewEntryPage {
     } catch (error) {
         console.error('Error taking picture:', error);
     }
-}
+  }
 
-// Add the base64ToBlob method here
-private base64ToBlob(base64: string, type: string): Blob {
-    const byteCharacters = atob(base64);
-    const byteArrays = [];
+  // Add the base64ToBlob method here
+  private base64ToBlob(base64: string, type: string): Blob {
+      const byteCharacters = atob(base64);
+      const byteArrays = [];
 
-    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-        const slice = byteCharacters.slice(offset, offset + 512);
-        const byteNumbers = new Array(slice.length);
-        
-        for (let i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
-        }
-        
-        byteArrays.push(new Uint8Array(byteNumbers));
-    }
+      for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+          const slice = byteCharacters.slice(offset, offset + 512);
+          const byteNumbers = new Array(slice.length);
+          
+          for (let i = 0; i < slice.length; i++) {
+              byteNumbers[i] = slice.charCodeAt(i);
+          }
+          
+          byteArrays.push(new Uint8Array(byteNumbers));
+      }
 
-    return new Blob(byteArrays, { type });
-}
+      return new Blob(byteArrays, { type });
+  }
+
+  async recordAudio(){}
+
+  async removeMediaFile(){}
 
   async saveEntry() {
     try {
