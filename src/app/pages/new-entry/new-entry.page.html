@@ -3,19 +3,17 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/tab1"></ion-back-button>
     </ion-buttons>
-    <ion-title>New Journal Entry</ion-title>
+    <ion-title>New Entry</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <ion-list>
-    <!-- Title -->
     <ion-item>
       <ion-label position="stacked">Title</ion-label>
       <ion-input [(ngModel)]="entry.title" placeholder="Enter title" required></ion-input>
     </ion-item>
 
-    <!-- Content -->
     <ion-item>
       <ion-label position="stacked">Content</ion-label>
       <ion-textarea
@@ -26,14 +24,19 @@
       </ion-textarea>
     </ion-item>
 
-    <!-- Location -->
     <ion-item>
       <ion-label position="stacked">Location</ion-label>
-      <ion-input [(ngModel)]="locationName" placeholder="Enter location"></ion-input>
+      <div class="location-container">
+        <ion-text *ngIf="currentLocation">{{currentLocation}}</ion-text>
+        <ion-button fill="clear" (click)="getCurrentLocation()" [disabled]="isGettingLocation">
+          <ion-icon slot="start" name="locate"></ion-icon>
+          {{isGettingLocation ? 'Getting location...' : 'Get Current Location'}}
+        </ion-button>
+      </div>
     </ion-item>
 
-    <!-- Mood -->
-    <ion-item>
+     <!-- Mood -->
+     <ion-item>
       <ion-label position="stacked">Mood</ion-label>
       <ion-select [(ngModel)]="entry.mood" placeholder="Select your mood">
         <ion-select-option *ngFor="let mood of moodOptions" [value]="mood">
@@ -64,9 +67,9 @@
       <ion-icon [name]="file.type === 'image' ? 'image' : 'mic'" slot="start"></ion-icon>
       <ion-label>{{ file.type === 'image' ? 'Photo' : 'Audio' }} added</ion-label>
     </ion-item>
+    
   </ion-list>
 
-  <!-- Save Button -->
   <div class="ion-padding">
     <ion-button expand="block" (click)="saveEntry()" [disabled]="!entry.title">
       Save Entry

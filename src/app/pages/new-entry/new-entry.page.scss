@@ -43,3 +43,14 @@ ion-content {
     gap: 8px;
     margin: 16px 0;
   }
+
+  .location-container {
+    width: 100%;
+    padding: 8px 0;
+    
+    ion-text {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ion-color-medium);
+    }
+  }

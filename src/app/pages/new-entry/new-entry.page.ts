@@ -17,15 +17,18 @@ import {
   IonButton,
   IonBackButton,
   IonButtons,
-  IonIcon
+  IonIcon,
+  IonText
 } from '@ionic/angular/standalone';
+import { Geolocation } from '@capacitor/geolocation';
 import { EntriesService } from 'src/services/entries.service';
 import { Entry } from 'src/app/data/entry';
 import { Location } from 'src/app/data/location';
 import { 
   cameraOutline, 
   micOutline, 
-  imageOutline 
+  imageOutline,
+  locationOutline 
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 
@@ -51,25 +54,62 @@ import { addIcons } from 'ionicons';
     IonButton,
     IonBackButton,
     IonButtons,
-    IonIcon
+    IonIcon,
+    IonText
   ]
 })
 export class NewEntryPage {
   entry: Entry = new Entry();
-  locationName: string = '';
+  currentLocation: string = '';
   mediaFiles: { type: 'image' | 'audio', path?: string }[] = [];
   moodOptions = ['Happy', 'Sad', 'Excited', 'Thoughtful', 'Anxious', 'Calm'];
+  isGettingLocation = false;
 
   constructor(
     private entriesService: EntriesService,
     private router: Router
   ) {
-    // Register the icons
     addIcons({
       'camera': cameraOutline,
       'mic': micOutline,
-      'image': imageOutline
+      'image': imageOutline,
+      'locate': locationOutline  // Changed to 'locate' to avoid duplicate
     });
+  }
+
+  async getCurrentLocation() {
+    try {
+      this.isGettingLocation = true;
+
+      // Request permission
+      const permissionStatus = await Geolocation.checkPermissions();
+      if (permissionStatus.location !== 'granted') {
+        const permission = await Geolocation.requestPermissions();
+        if (permission.location !== 'granted') {
+          throw new Error('Location permission not granted');
+        }
+      }
+
+      // Get current position
+      const position = await Geolocation.getCurrentPosition();
+      
+      // Use reverse geocoding to get address (you might want to use a service like Google Maps Geocoding API)
+      const locationName = `${position.coords.latitude}, ${position.coords.longitude}`;
+      
+      if (this.entry.location) {
+        this.entry.location.name = locationName;
+      } else {
+        const location = new Location();
+        location.name = locationName;
+        this.entry.location = location;
+      }
+      
+      this.currentLocation = locationName;
+    } catch (error) {
+      console.error('Error getting location:', error);
+    } finally {
+      this.isGettingLocation = false;
+    }
   }
 
   async addMediaFile(type: 'image' | 'audio') {
@@ -85,9 +125,9 @@ export class NewEntryPage {
       entryToSave.content = this.entry.content;
       entryToSave.mood = this.entry.mood;
       
-      if (this.locationName) {
+      if (this.entry.location) {
         const location = new Location();
-        location.name = this.locationName;
+        location.name = this.entry.location.name;
         entryToSave.location = location;
       }
 
