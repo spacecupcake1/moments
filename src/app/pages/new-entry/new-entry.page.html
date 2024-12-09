@@ -49,7 +49,7 @@
       <ion-label>Media Files</ion-label>
     </ion-item>
 
-    <div class="media-buttons ion-padding-horizontal">
+    <div class="image-buttons ion-padding-horizontal">
       <ion-button expand="full" (click)="takePicture()" class="ion-margin-bottom">
         <ion-icon name="camera" slot="start"></ion-icon>
         Take Photo
@@ -61,7 +61,7 @@
       </ion-button>
     </div>
 
-    <div class="media-buttons ion-padding-horizontal">
+    <div class="mic-buttons ion-padding-horizontal">
 
       <ion-button
         expand="full"
@@ -97,7 +97,7 @@
     </ion-list>
 
     <!-- Save Button -->
-    <div class="ion-padding">
+    <div class="save-buttons ion-padding">
       <ion-button expand="block" (click)="saveEntry()" [disabled]="!entry.title">
         Save Entry
       </ion-button>
