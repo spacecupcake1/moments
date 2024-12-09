@@ -30,23 +30,62 @@ export class EntriesService {
 
   async uploadFile(file: File, entryId: number, fileType: 'image' | 'audio'): Promise<string> {
     try {
-      const timestamp = new Date().getTime();
-      const filePath = `${entryId}/${fileType}_${timestamp}_${file.name}`;
-      
-      const { data, error } = await this.supabase.storage
-        .from('media')
-        .upload(filePath, file);
+      // Log initial attempt
+      console.log('Starting file upload process:', {
+        fileType,
+        fileName: file.name,
+        fileSize: file.size,
+        entryId
+      });
 
-      if (error) throw error;
+      // First check if bucket exists
+      const { data: buckets, error: bucketError } = await this.supabase
+        .storage
+        .listBuckets();
+
+      if (bucketError) {
+        console.error('Error checking buckets:', bucketError);
+        throw bucketError;
+      }
+
+      console.log('Available buckets:', buckets?.map(b => b.name));
+
+      // Create timestamp and clean filename
+      const timestamp = new Date().getTime();
+      const cleanFileName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+      const filePath = `${fileType}_${timestamp}_${cleanFileName}`;
+
+      console.log('Attempting upload with path:', filePath);
+
+      // Create a clean Blob with proper MIME type
+      const blob = new Blob([await file.arrayBuffer()], { type: file.type });
+
+      // Attempt upload
+      const { data: uploadData, error: uploadError } = await this.supabase.storage
+        .from('media')
+        .upload(filePath, blob, {
+          contentType: file.type,
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) {
+        console.error('Upload error details:', uploadError);
+        throw uploadError;
+      }
+
+      console.log('Upload successful:', uploadData);
 
       // Get public URL
       const { data: { publicUrl } } = this.supabase.storage
         .from('media')
         .getPublicUrl(filePath);
 
+      console.log('Generated public URL:', publicUrl);
       return publicUrl;
+
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error('Detailed error in uploadFile:', error);
       throw error;
     }
   }
@@ -92,7 +131,7 @@ export class EntriesService {
 
       const formattedEntries = entries.map(entry => {
         const entryObj = new Entry();
-        
+
         // Copy basic entry properties
         Object.assign(entryObj, {
           id: entry.id,
@@ -105,7 +144,7 @@ export class EntriesService {
           offline_id: entry.offline_id,
           location_id: entry.location_id
         });
-        
+
         // Format media files
         entryObj.mediaFiles = entry.media_files?.map((file: any) => {
           const mediaFile = new MediaFile();
@@ -155,7 +194,7 @@ export class EntriesService {
 
   async addEntry(entry: Entry): Promise<void> {
     try {
-      // Create the entry
+      // Create the entry first
       const { data: newEntry, error: entryError } = await this.supabase
         .from('entries')
         .insert({
@@ -166,16 +205,10 @@ export class EntriesService {
         })
         .select()
         .single();
-  
-      if (entryError) {
-        console.error('Entry insertion error:', entryError);
-        throw entryError;
-      }
-  
-      if (!newEntry) {
-        throw new Error('No entry data returned after insertion');
-      }
-  
+
+      if (entryError) throw entryError;
+      if (!newEntry) throw new Error('No entry data returned after insertion');
+
       // Add location if it exists
       if (entry.location?.name) {
         const { error: locationError } = await this.supabase
@@ -184,32 +217,34 @@ export class EntriesService {
             name: entry.location.name,
             entry: newEntry.id
           });
-  
-        if (locationError) {
-          console.error('Location insertion error:', locationError);
-          throw locationError;
-        }
+
+        if (locationError) throw locationError;
       }
-  
-      // Add media files if they exist
+
+      // Handle media files
       if (entry.mediaFiles && entry.mediaFiles.length > 0) {
         for (const mediaFile of entry.mediaFiles) {
           if (mediaFile.tempFile) {
-            const fileUrl = await this.uploadFile(
-              mediaFile.tempFile,
-              newEntry.id,
-              mediaFile.file_type
-            );
-  
-            await this.addMediaFile(
-              newEntry.id,
-              fileUrl,
-              mediaFile.file_type
-            );
+            try {
+              const fileUrl = await this.uploadFile(
+                mediaFile.tempFile,
+                newEntry.id,
+                mediaFile.file_type
+              );
+
+              await this.addMediaFile(
+                newEntry.id,
+                fileUrl,
+                mediaFile.file_type
+              );
+            } catch (mediaError) {
+              console.error('Error processing media file:', mediaError);
+              throw mediaError;
+            }
           }
         }
       }
-  
+
       await this.loadEntries();
     } catch (error) {
       console.error('Error in addEntry:', error);
