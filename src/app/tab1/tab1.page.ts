@@ -1,30 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { Entry } from '../data/entry';
 import { EntriesService } from 'src/services/entries.service';
 import { 
   IonContent, 
-  IonItem, 
-  IonInput, 
-  IonSelect, 
-  IonSelectOption, 
-  IonRange, 
-  IonText,
-  IonLabel,
-  IonButton,
   IonHeader,
   IonToolbar,
   IonTitle,
+  IonItem, 
+  IonLabel,
+  IonSelect,
+  IonSelectOption,
   IonList,
   IonFab,
   IonFabButton,
-  IonIcon,
-  IonCol,
-  IonRow,
-  IonGrid
+  IonIcon
 } from '@ionic/angular/standalone';
 
 @Component({
@@ -35,27 +27,19 @@ import {
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule,
     RouterLink,
     IonContent,
-    IonItem,
-    IonInput,
-    IonSelect,
-    IonSelectOption,
-    IonRange,
-    IonText,
-    IonLabel,
-    IonButton,
     IonHeader,
     IonToolbar,
     IonTitle,
+    IonItem,
+    IonLabel,
+    IonSelect,
+    IonSelectOption,
     IonList,
     IonFab,
     IonFabButton,
-    IonIcon,
-    IonCol,
-    IonRow,
-    IonGrid
+    IonIcon
   ]
 })
 export class Tab1Page implements OnInit {
