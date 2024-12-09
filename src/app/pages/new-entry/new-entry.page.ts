@@ -71,7 +71,7 @@ export class NewEntryPage {
       private entriesService: EntriesService,
       private router: Router
   ) {
-    addIcons({'camera':cameraOutline,'mic':micOutline,'image':imageOutline,'locate':locationOutline,'trash':trashOutline});
+    addIcons({'camera':cameraOutline,'image':imageOutline,'locate':locationOutline,'trash':trashOutline});
   }
 
   async getCurrentLocation() {
@@ -159,8 +159,6 @@ export class NewEntryPage {
 
       return new Blob(byteArrays, { type });
   }
-
-  async recordAudio(){}
 
   async removeMediaFile(){}
 
