@@ -110,27 +110,67 @@ export class EntriesService {
     );
   }
 
+
+
+
+
   async addEntry(entry: Entry): Promise<void> {
     try {
-      const { error } = await this.supabase
+      // Simple insert with just the title
+      const { data, error } = await this.supabase
         .from('entries')
-        .insert([
-          {
-            title: entry.title,
+        .insert([{ title: entry.title }])
+        .select('id')
+        .single();
+  
+      if (error) {
+        console.error('Entry insertion error:', error);
+        return;
+      }
+  
+      console.log('Created entry:', data);
+  
+      // Now update the entry with the rest of the data
+      if (data?.id) {
+        const { error: updateError } = await this.supabase
+          .from('entries')
+          .update({
             content: entry.content,
             mood: entry.mood,
-            location_id: entry.location_id,
             is_synced: true
+          })
+          .eq('id', data.id);
+  
+        if (updateError) {
+          console.error('Error updating entry:', updateError);
+          return;
+        }
+  
+        // Add location if it exists
+        if (entry.location?.name) {
+          const { error: locationError } = await this.supabase
+            .from('locations')
+            .insert([{
+              name: entry.location.name,
+              entry: data.id
+            }]);
+  
+          if (locationError) {
+            console.error('Error adding location:', locationError);
           }
-        ]);
-
-      if (error) throw error;
+        }
+      }
+  
       await this.loadEntries();
     } catch (error) {
-      console.error('Error adding entry:', error);
-      throw error;
+      console.error('Error in addEntry:', error);
     }
   }
+
+
+
+
+
 
   async updateEntry(entry: Entry): Promise<void> {
     try {

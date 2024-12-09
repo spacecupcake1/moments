@@ -1,0 +1,75 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab1"></ion-back-button>
+    </ion-buttons>
+    <ion-title>New Journal Entry</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <!-- Title -->
+    <ion-item>
+      <ion-label position="stacked">Title</ion-label>
+      <ion-input [(ngModel)]="entry.title" placeholder="Enter title" required></ion-input>
+    </ion-item>
+
+    <!-- Content -->
+    <ion-item>
+      <ion-label position="stacked">Content</ion-label>
+      <ion-textarea
+        [(ngModel)]="entry.content"
+        placeholder="Write your thoughts..."
+        [rows]="6"
+        autoGrow="true">
+      </ion-textarea>
+    </ion-item>
+
+    <!-- Location -->
+    <ion-item>
+      <ion-label position="stacked">Location</ion-label>
+      <ion-input [(ngModel)]="locationName" placeholder="Enter location"></ion-input>
+    </ion-item>
+
+    <!-- Mood -->
+    <ion-item>
+      <ion-label position="stacked">Mood</ion-label>
+      <ion-select [(ngModel)]="entry.mood" placeholder="Select your mood">
+        <ion-select-option *ngFor="let mood of moodOptions" [value]="mood">
+          {{ mood }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Media Files -->
+    <ion-item lines="none">
+      <ion-label position="stacked">Media Files</ion-label>
+    </ion-item>
+
+    <div class="ion-padding-horizontal">
+      <ion-button expand="full" (click)="addMediaFile('image')" class="ion-margin-bottom">
+        <ion-icon name="camera" slot="start"></ion-icon>
+        Add Photo
+      </ion-button>
+      
+      <ion-button expand="full" (click)="addMediaFile('audio')">
+        <ion-icon name="mic" slot="start"></ion-icon>
+        Add Audio
+      </ion-button>
+    </div>
+
+    <!-- Media Files List -->
+    <ion-item *ngFor="let file of mediaFiles">
+      <ion-icon [name]="file.type === 'image' ? 'image' : 'mic'" slot="start"></ion-icon>
+      <ion-label>{{ file.type === 'image' ? 'Photo' : 'Audio' }} added</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- Save Button -->
+  <div class="ion-padding">
+    <ion-button expand="block" (click)="saveEntry()" [disabled]="!entry.title">
+      Save Entry
+    </ion-button>
+  </div>
+</ion-content>
