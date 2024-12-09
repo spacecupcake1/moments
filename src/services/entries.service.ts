@@ -18,9 +18,7 @@ export class EntriesService {
       environment.SUPABASE_URL,
       environment.SUPABASE_KEY,
       {
-        db: {
-          schema: 'public'
-        },
+        db: { schema: 'public' },
         auth: {
           persistSession: false,
           autoRefreshToken: false,
@@ -28,6 +26,47 @@ export class EntriesService {
         }
       }
     );
+  }
+
+  async uploadFile(file: File, entryId: number, fileType: 'image' | 'audio'): Promise<string> {
+    try {
+      const timestamp = new Date().getTime();
+      const filePath = `${entryId}/${fileType}_${timestamp}_${file.name}`;
+      
+      const { data, error } = await this.supabase.storage
+        .from('media')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      // Get public URL
+      const { data: { publicUrl } } = this.supabase.storage
+        .from('media')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      throw error;
+    }
+  }
+
+  async addMediaFile(entryId: number, fileUrl: string, fileType: 'image' | 'audio'): Promise<void> {
+    try {
+      const { error } = await this.supabase
+        .from('media_files')
+        .insert({
+          entry: entryId,
+          file_type: fileType,
+          file_url: fileUrl,
+          is_synced: true
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error adding media file:', error);
+      throw error;
+    }
   }
 
   async loadEntries(): Promise<void> {
@@ -116,47 +155,57 @@ export class EntriesService {
 
   async addEntry(entry: Entry): Promise<void> {
     try {
-      // Simple insert with just the title
-      const { data, error } = await this.supabase
+      // Create the entry
+      const { data: newEntry, error: entryError } = await this.supabase
         .from('entries')
-        .insert([{ title: entry.title }])
-        .select('id')
+        .insert({
+          title: entry.title,
+          content: entry.content,
+          mood: entry.mood,
+          is_synced: true
+        })
+        .select()
         .single();
   
-      if (error) {
-        console.error('Entry insertion error:', error);
-        return;
+      if (entryError) {
+        console.error('Entry insertion error:', entryError);
+        throw entryError;
       }
   
-      console.log('Created entry:', data);
+      if (!newEntry) {
+        throw new Error('No entry data returned after insertion');
+      }
   
-      // Now update the entry with the rest of the data
-      if (data?.id) {
-        const { error: updateError } = await this.supabase
-          .from('entries')
-          .update({
-            content: entry.content,
-            mood: entry.mood,
-            is_synced: true
-          })
-          .eq('id', data.id);
+      // Add location if it exists
+      if (entry.location?.name) {
+        const { error: locationError } = await this.supabase
+          .from('locations')
+          .insert({
+            name: entry.location.name,
+            entry: newEntry.id
+          });
   
-        if (updateError) {
-          console.error('Error updating entry:', updateError);
-          return;
+        if (locationError) {
+          console.error('Location insertion error:', locationError);
+          throw locationError;
         }
+      }
   
-        // Add location if it exists
-        if (entry.location?.name) {
-          const { error: locationError } = await this.supabase
-            .from('locations')
-            .insert([{
-              name: entry.location.name,
-              entry: data.id
-            }]);
+      // Add media files if they exist
+      if (entry.mediaFiles && entry.mediaFiles.length > 0) {
+        for (const mediaFile of entry.mediaFiles) {
+          if (mediaFile.tempFile) {
+            const fileUrl = await this.uploadFile(
+              mediaFile.tempFile,
+              newEntry.id,
+              mediaFile.file_type
+            );
   
-          if (locationError) {
-            console.error('Error adding location:', locationError);
+            await this.addMediaFile(
+              newEntry.id,
+              fileUrl,
+              mediaFile.file_type
+            );
           }
         }
       }
@@ -164,11 +213,9 @@ export class EntriesService {
       await this.loadEntries();
     } catch (error) {
       console.error('Error in addEntry:', error);
+      throw error;
     }
   }
-
-
-
 
 
 
@@ -195,6 +242,24 @@ export class EntriesService {
 
   async deleteEntry(entryId: number): Promise<void> {
     try {
+      // First delete any associated files from storage
+      const { data: mediaFiles } = await this.supabase
+        .from('media_files')
+        .select('file_url')
+        .eq('entry', entryId);
+
+      if (mediaFiles) {
+        for (const mediaFile of mediaFiles) {
+          const filePath = mediaFile.file_url.split('/').pop();
+          if (filePath) {
+            await this.supabase.storage
+              .from('media')
+              .remove([`${entryId}/${filePath}`]);
+          }
+        }
+      }
+
+      // Then delete the entry (cascade will handle related records)
       const { error } = await this.supabase
         .from('entries')
         .delete()
@@ -260,6 +325,37 @@ export class EntriesService {
       return entryObj;
     } catch (error) {
       console.error('Error getting entry:', error);
+      throw error;
+    }
+  }
+
+  async deleteMediaFile(mediaFileId: number): Promise<void> {
+    try {
+      const { data: mediaFile } = await this.supabase
+        .from('media_files')
+        .select('file_url')
+        .eq('id', mediaFileId)
+        .single();
+
+      if (mediaFile) {
+        // Delete from storage
+        const filePath = mediaFile.file_url.split('/').pop();
+        if (filePath) {
+          await this.supabase.storage
+            .from('media')
+            .remove([filePath]);
+        }
+
+        // Delete from database
+        const { error } = await this.supabase
+          .from('media_files')
+          .delete()
+          .eq('id', mediaFileId);
+
+        if (error) throw error;
+      }
+    } catch (error) {
+      console.error('Error deleting media file:', error);
       throw error;
     }
   }

@@ -21,15 +21,17 @@ import {
   IonText
 } from '@ionic/angular/standalone';
 import { Geolocation } from '@capacitor/geolocation';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { EntriesService } from 'src/services/entries.service';
 import { Entry } from 'src/app/data/entry';
 import { Location } from 'src/app/data/location';
+import { MediaFile } from 'src/app/data/media_files';
 import { 
   cameraOutline, 
   micOutline, 
   imageOutline,
-  locationOutline 
-} from 'ionicons/icons';
+  locationOutline,
+  trashOutline, locate } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 
 @Component({
@@ -61,19 +63,20 @@ import { addIcons } from 'ionicons';
 export class NewEntryPage {
   entry: Entry = new Entry();
   currentLocation: string = '';
-  mediaFiles: { type: 'image' | 'audio', path?: string }[] = [];
+  mediaFiles: MediaFile[] = [];
   moodOptions = ['Happy', 'Sad', 'Excited', 'Thoughtful', 'Anxious', 'Calm'];
   isGettingLocation = false;
 
   constructor(
-    private entriesService: EntriesService,
-    private router: Router
+      private entriesService: EntriesService,
+      private router: Router
   ) {
     addIcons({
       'camera': cameraOutline,
       'mic': micOutline,
       'image': imageOutline,
-      'locate': locationOutline  // Changed to 'locate' to avoid duplicate
+      'locate': locationOutline,
+      'trash': trashOutline
     });
   }
 
@@ -112,11 +115,56 @@ export class NewEntryPage {
     }
   }
 
-  async addMediaFile(type: 'image' | 'audio') {
-    // Here you would implement file selection/capture
-    // For now, we'll just add a placeholder
-    this.mediaFiles.push({ type });
-  }
+  
+
+  async takePicture() {
+    try {
+        const image = await Camera.getPhoto({
+            quality: 90,
+            allowEditing: false,
+            resultType: CameraResultType.Base64,
+            source: CameraSource.Camera
+        });
+
+        if (image.base64String) {
+            const blob = this.base64ToBlob(
+                image.base64String,
+                `image/${image.format}`
+            );
+            const file = new File([blob], `photo.${image.format}`, {
+                type: `image/${image.format}`
+            });
+
+            const mediaFile = new MediaFile();
+            mediaFile.file_type = 'image';
+            mediaFile.file_path = file.name;
+            mediaFile.tempFile = file;
+
+            this.mediaFiles.push(mediaFile);
+        }
+    } catch (error) {
+        console.error('Error taking picture:', error);
+    }
+}
+
+// Add the base64ToBlob method here
+private base64ToBlob(base64: string, type: string): Blob {
+    const byteCharacters = atob(base64);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+        const slice = byteCharacters.slice(offset, offset + 512);
+        const byteNumbers = new Array(slice.length);
+        
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+        
+        byteArrays.push(new Uint8Array(byteNumbers));
+    }
+
+    return new Blob(byteArrays, { type });
+}
 
   async saveEntry() {
     try {
@@ -124,10 +172,11 @@ export class NewEntryPage {
       entryToSave.title = this.entry.title;
       entryToSave.content = this.entry.content;
       entryToSave.mood = this.entry.mood;
+      entryToSave.mediaFiles = this.mediaFiles;
       
-      if (this.entry.location) {
+      if (this.currentLocation) {
         const location = new Location();
-        location.name = this.entry.location.name;
+        location.name = this.currentLocation;
         entryToSave.location = location;
       }
 

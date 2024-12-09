@@ -44,35 +44,46 @@
         </ion-select-option>
       </ion-select>
     </ion-item>
-
-    <!-- Media Files -->
+    <!-- Media Files Section -->
     <ion-item lines="none">
-      <ion-label position="stacked">Media Files</ion-label>
+      <ion-label>Media Files</ion-label>
     </ion-item>
 
-    <div class="ion-padding-horizontal">
-      <ion-button expand="full" (click)="addMediaFile('image')" class="ion-margin-bottom">
+    <div class="media-buttons ion-padding-horizontal">
+      <ion-button expand="full" (click)="takePicture()" class="ion-margin-bottom">
         <ion-icon name="camera" slot="start"></ion-icon>
-        Add Photo
+        Take Photo
       </ion-button>
       
-      <ion-button expand="full" (click)="addMediaFile('audio')">
+      <ion-button expand="full" (click)="recordAudio()">
         <ion-icon name="mic" slot="start"></ion-icon>
-        Add Audio
+        Record Audio
       </ion-button>
     </div>
 
-    <!-- Media Files List -->
-    <ion-item *ngFor="let file of mediaFiles">
-      <ion-icon [name]="file.type === 'image' ? 'image' : 'mic'" slot="start"></ion-icon>
-      <ion-label>{{ file.type === 'image' ? 'Photo' : 'Audio' }} added</ion-label>
-    </ion-item>
-    
-  </ion-list>
+    <!-- Media Files Preview -->
+    <ion-list *ngIf="mediaFiles.length > 0">
+      <ion-item *ngFor="let file of mediaFiles; let i = index">
+        <ion-icon 
+          [name]="file.file_type === 'image' ? 'image' : 'mic'" 
+          slot="start">
+        </ion-icon>
+        <ion-label>{{ file.file_type === 'image' ? 'Photo' : 'Audio' }}</ion-label>
+        <ion-button 
+          slot="end" 
+          fill="clear" 
+          color="danger"
+          (click)="removeMediaFile(i)">
+          <ion-icon name="trash"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
 
-  <div class="ion-padding">
-    <ion-button expand="block" (click)="saveEntry()" [disabled]="!entry.title">
-      Save Entry
-    </ion-button>
-  </div>
+    <!-- Save Button -->
+    <div class="ion-padding">
+      <ion-button expand="block" (click)="saveEntry()" [disabled]="!entry.title">
+        Save Entry
+      </ion-button>
+    </div>
+  </ion-list>
 </ion-content>
