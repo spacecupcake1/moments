@@ -71,7 +71,7 @@ export class NewEntryPage {
       private entriesService: EntriesService,
       private router: Router
   ) {
-    addIcons({locate,camera,mic,trash,'camera':cameraOutline,'mic':micOutline,'image':imageOutline,'locate':locationOutline,'trash':trashOutline});
+    addIcons({'camera':cameraOutline,'mic':micOutline,'image':imageOutline,'locate':locationOutline,'trash':trashOutline});
   }
 
   async getCurrentLocation() {
