@@ -1,0 +1,19 @@
+.entry-card {
+    width: 100%;
+    margin: 8px 0;
+  
+    ion-card-subtitle {
+      font-size: 0.8em;
+      color: var(--ion-color-medium);
+    }
+  
+    ion-card-title {
+      font-size: 1.2em;
+      margin-top: 4px;
+    }
+  
+    ion-button {
+      --padding-start: 8px;
+      --padding-end: 8px;
+    }
+  }
