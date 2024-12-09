@@ -1,0 +1,7 @@
+{
+  "name": "moments",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
