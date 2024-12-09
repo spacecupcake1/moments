@@ -1,75 +1,50 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-title>Moments</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12">
-        <ion-item>
-          <ion-label>Datum</ion-label>
-          <ion-select [(ngModel)]="dateFilter" (ionChange)="applyFilters()">
-            <ion-select-option [value]="null">Alle</ion-select-option>
-            <ion-select-option *ngFor="let date of availableDates" [value]="date">
-              {{ date | date:'dd. MMM yyyy' }}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
-      </ion-col>
-      <ion-col size="12">
-        <ion-item>
-          <ion-label>Ort</ion-label>
-          <ion-select [(ngModel)]="locationFilter" (ionChange)="applyFilters()">
-            <ion-select-option [value]="null">Alle</ion-select-option>
-            <ion-select-option *ngFor="let location of availableLocations" [value]="location">
-              {{ location }}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
-      </ion-col>
-    </ion-row>
+  <ion-list>
+    <ion-item class="filter-item">
+      <ion-label>Datum</ion-label>
+      <ion-select [(ngModel)]="dateFilter" (ionChange)="applyFilters()">
+        <ion-select-option [value]="null">Alle</ion-select-option>
+        <ion-select-option *ngFor="let date of availableDates" [value]="date">
+          {{ date | date:'dd. MMM yyyy' }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
 
-    <ion-row>
-      <ion-col size="12">
-        <ion-list>
-          <ion-item *ngFor="let entry of filteredEntries">
-            <ion-card class="entry-card">
-              <ion-card-header>
-                <ion-card-subtitle>
-                  {{ entry.created_at | date:'dd. MMM yyyy' }}
-                </ion-card-subtitle>
-                <ion-card-title>{{ entry.title }}</ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                <ion-row class="ion-align-items-center">
-                  <ion-col size="auto" *ngIf="hasMediaType(entry, 'image')">
-                    <ion-button fill="clear" size="small">
-                      <ion-icon name="image"></ion-icon>
-                    </ion-button>
-                  </ion-col>
-                  <ion-col size="auto" *ngIf="hasMediaType(entry, 'audio')">
-                    <ion-button fill="clear" size="small">
-                      <ion-icon name="mic"></ion-icon>
-                    </ion-button>
-                  </ion-col>
-                  <ion-col size="auto" *ngIf="entry.location_name">
-                    <ion-button fill="clear" size="small">
-                      <ion-icon name="location"></ion-icon>
-                    </ion-button>
-                  </ion-col>
-                </ion-row>
-              </ion-card-content>
-            </ion-card>
-          </ion-item>
-        </ion-list>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+    <ion-item class="filter-item">
+      <ion-label>Ort</ion-label>
+      <ion-select [(ngModel)]="locationFilter" (ionChange)="applyFilters()">
+        <ion-select-option [value]="null">Alle</ion-select-option>
+        <ion-select-option *ngFor="let location of availableLocations" [value]="location">
+          {{ location }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item *ngFor="let entry of filteredEntries" class="entry-item">
+      <div class="ion-padding-vertical">
+        <div class="date-location">
+          {{ entry.created_at | date:'dd. MMM yyyy' }}
+          <ng-container *ngIf="entry.location?.name">
+            • {{ entry.location?.name }}
+          </ng-container>
+        </div>
+        <h2 class="entry-title">{{ entry.title }}</h2>
+        <div class="media-type">
+          <span *ngIf="hasMediaType(entry, 'image')">Photos</span>
+          <span *ngIf="hasMediaType(entry, 'audio')" class="ion-margin-start">Audio</span>
+        </div>
+      </div>
+    </ion-item>
+  </ion-list>
 
   <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-    <ion-fab-button routerLink="/new-entry">
+    <ion-fab-button>
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

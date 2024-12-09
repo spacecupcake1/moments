@@ -5,6 +5,27 @@ import { IonicModule } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { Entry } from '../data/entry';
 import { EntriesService } from 'src/services/entries.service';
+import { 
+  IonContent, 
+  IonItem, 
+  IonInput, 
+  IonSelect, 
+  IonSelectOption, 
+  IonRange, 
+  IonText,
+  IonLabel,
+  IonButton,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonList,
+  IonFab,
+  IonFabButton,
+  IonIcon,
+  IonCol,
+  IonRow,
+  IonGrid
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-tab1',
@@ -15,7 +36,26 @@ import { EntriesService } from 'src/services/entries.service';
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterLink
+    RouterLink,
+    IonContent,
+    IonItem,
+    IonInput,
+    IonSelect,
+    IonSelectOption,
+    IonRange,
+    IonText,
+    IonLabel,
+    IonButton,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonList,
+    IonFab,
+    IonFabButton,
+    IonIcon,
+    IonCol,
+    IonRow,
+    IonGrid
   ]
 })
 export class Tab1Page implements OnInit {
@@ -30,6 +70,7 @@ export class Tab1Page implements OnInit {
 
   ngOnInit() {
     this.entriesService.getEntries().subscribe(entries => {
+      console.log('Received entries:', entries);
       this.entries = entries;
       this.updateFilters();
       this.applyFilters();
@@ -47,14 +88,16 @@ export class Tab1Page implements OnInit {
       this.entries.map(entry => 
         new Date(entry.created_at).toISOString().split('T')[0]
       )
-    )];
+    )].sort().reverse();
 
-    // Get unique locations
+    // Get unique locations, filtering out undefined values
     this.availableLocations = [...new Set(
       this.entries
-        .map(entry => entry.location_name)
-        .filter(location => location) as string[]
-    )];
+        .map(entry => entry.location?.name)
+        .filter((name): name is string => name !== undefined && name !== null)
+    )].sort();
+
+    console.log('Available locations:', this.availableLocations);
   }
 
   applyFilters() {
@@ -62,7 +105,7 @@ export class Tab1Page implements OnInit {
       const dateMatch = !this.dateFilter || 
         entry.created_at.startsWith(this.dateFilter);
       const locationMatch = !this.locationFilter || 
-        entry.location_name === this.locationFilter;
+        entry.location?.name === this.locationFilter;
       return dateMatch && locationMatch;
     });
   }
