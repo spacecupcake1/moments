@@ -77,14 +77,7 @@ export class NewEntryPage {
     private toastController: ToastController,
     private alertController: AlertController
   ) {
-    addIcons({
-      'camera': cameraOutline,
-      'image': imageOutline,
-      'locate': locationOutline,
-      'trash': trashOutline,
-      'checkmark-circle': checkmarkCircleOutline,
-      'warning': warningOutline
-    });
+    addIcons({'camera':cameraOutline,'image':imageOutline,'locate':locationOutline,'trash':trashOutline,'checkmarkCircle':checkmarkCircleOutline,'warning':warningOutline});
   }
 
   async showSuccessToast() {
@@ -214,6 +207,40 @@ export class NewEntryPage {
     }
 
     return new Blob(byteArrays, { type });
+  }
+
+  async choosePicture() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Photos // This will open the photo gallery
+      });
+
+      if (image.base64String) {
+        const blob = this.base64ToBlob(
+          image.base64String,
+          `image/${image.format}`
+        );
+
+        const timestamp = new Date().getTime();
+        const file = new File([blob], `photo_${timestamp}.${image.format}`, {
+          type: `image/${image.format}`
+        });
+
+        const mediaFile = new MediaFile();
+        mediaFile.file_type = 'image';
+        mediaFile.file_path = file.name;
+        mediaFile.tempFile = file;
+        mediaFile.is_synced = false;
+
+        this.mediaFiles.push(mediaFile);
+      }
+    } catch (error) {
+      console.error('Error choosing picture:', error);
+      await this.showErrorAlert(error);
+    }
   }
 
   async saveEntry() {
