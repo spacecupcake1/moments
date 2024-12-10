@@ -15,6 +15,28 @@
         slot="end">
       </ion-toggle>
     </ion-item>
+
+    <!-- Notifications Toggle -->
+    <ion-item>
+      <ion-label>Notifications</ion-label>
+      <ion-toggle
+        [checked]="notifications"
+        (ionChange)="onNotificationToggle($event)"
+        slot="end">
+      </ion-toggle>
+    </ion-item>
+
+    <!-- Time Picker -->
+    <ion-item>
+      <ion-label>Notification Time</ion-label>
+      <ion-datetime
+        display-format="HH:mm"
+        [value]="selectedTime"
+        (ionChange)="onTimeChange($event)"
+        presentation="time">
+      </ion-datetime>
+    </ion-item>
+
     <!-- About Section -->
     <ion-item-divider>
       <ion-label>About Moments</ion-label>
