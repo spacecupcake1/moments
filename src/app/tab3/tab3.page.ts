@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import {
   IonContent,
@@ -43,6 +44,17 @@ export class Tab3Page {
     this.initializeDarkMode();
     this.initializeNotificationSettings();
     this.checkNotificationPermissions();
+    this.setupNotificationListeners();
+  }
+
+  private async setupNotificationListeners() {
+    await LocalNotifications.addListener('localNotificationReceived', (notification) => {
+      console.log('Notification received:', notification);
+    });
+
+    await LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
+      console.log('Notification action performed:', notification);
+    });
   }
 
   private async checkNotificationPermissions() {
@@ -140,23 +152,42 @@ export class Tab3Page {
         scheduledTime.setDate(scheduledTime.getDate() + 1);
       }
 
+      // Set up the notification channel first (Android only)
+      if (Capacitor.getPlatform() === 'android') {
+        await LocalNotifications.createChannel({
+          id: 'journal-reminders',
+          name: 'Journal Reminders',
+          description: 'Daily reminders to write in your journal',
+          importance: 5,
+          visibility: 1,
+          sound: 'default',
+          lights: true
+        });
+      }
+
+      // Schedule the notification
       await LocalNotifications.schedule({
         notifications: [{
           id: this.notificationId,
-          title: 'Journal Reminder',
-          body: "Don't forget to write in your journal today!",
+          title: '📝 Journal Time!',
+          body: "Time to write today's memories in your journal!",
           schedule: {
             at: scheduledTime,
             allowWhileIdle: true,
-            every: 'day'
+            every: 'day',
           },
+          autoCancel: true,
           sound: 'default',
-          actionTypeId: 'OPEN_JOURNAL',
+          smallIcon: 'ic_launcher_round',
+          iconColor: '#488AFF',
+          largeIcon: 'ic_launcher_round',
+          channelId: 'journal-reminders',
           extra: {
-            data: 'Open journal entry page'
+            data: 'journal-reminder'
           }
         }]
       });
+
     } catch (error) {
       console.error('Error scheduling notification:', error);
       this.showToast('Failed to set notification');
