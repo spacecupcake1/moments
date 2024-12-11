@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { VoiceRecorder } from 'capacitor-voice-recorder';
 import { addIcons } from 'ionicons';
 import { camera, image, locate, mic, stopCircle, trash } from 'ionicons/icons';
@@ -32,7 +32,8 @@ export class EditEntryPage implements OnInit {
   constructor(
     private entriesService: EntriesService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastController: ToastController
   ) {
     addIcons({ camera, image, locate, mic, stopCircle, trash });
   }
@@ -72,13 +73,30 @@ export class EditEntryPage implements OnInit {
         };
       }
 
-      // Make sure mediaFiles are properly attached to the entry
       this.entry.mediaFiles = this.mediaFiles;
 
       // Update the entry
       await this.entriesService.updateEntry(this.entry);
+
+      // Show success message
+      const toast = await this.toastController.create({
+        message: 'Entry updated successfully',
+        duration: 2000,
+        position: 'bottom',
+        color: 'success'
+      });
+      await toast.present();
+
       this.router.navigate(['/entry-detail', this.entry.id]);
     } catch (error) {
+      // Show error message
+      const toast = await this.toastController.create({
+        message: 'Error updating entry',
+        duration: 2000,
+        position: 'bottom',
+        color: 'danger'
+      });
+      await toast.present();
       console.error('Error updating entry:', error);
     }
   }

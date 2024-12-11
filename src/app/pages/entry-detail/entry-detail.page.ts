@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import {
   IonBackButton,
   IonButton,
@@ -49,7 +49,8 @@ export class EntryDetailPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private entriesService: EntriesService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private toastController: ToastController
   ) {
     addIcons({ createOutline, trashOutline });
   }
@@ -101,6 +102,14 @@ export class EntryDetailPage implements OnInit {
           handler: async () => {
             if (this.entry?.id) {
               await this.entriesService.deleteEntry(this.entry.id);
+              // Show toast message
+              const toast = await this.toastController.create({
+                message: 'Entry deleted successfully',
+                duration: 2000,
+                position: 'bottom',
+                color: 'success'
+              });
+              await toast.present();
               this.router.navigate(['/tabs/tab1']);
             }
           }
