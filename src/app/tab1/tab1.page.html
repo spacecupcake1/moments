@@ -26,7 +26,7 @@
       </ion-select>
     </ion-item>
 
-    <ion-item *ngFor="let entry of filteredEntries" class="entry-item">
+    <ion-item *ngFor="let entry of filteredEntries" class="entry-item"  [routerLink]="['/entry', entry.id.toString()]">
       <div class="ion-padding-vertical">
         <div class="date-location">
           {{ entry.created_at | date:'dd. MMM yyyy' }}

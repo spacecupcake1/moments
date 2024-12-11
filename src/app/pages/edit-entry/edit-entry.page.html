@@ -1,0 +1,110 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/entry-detail/{{entry.id}}"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Edit Entry</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item>
+      <ion-label position="stacked">Title</ion-label>
+      <ion-input [(ngModel)]="entry.title" placeholder="Enter title" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Content</ion-label>
+      <ion-textarea
+        [(ngModel)]="entry.content"
+        placeholder="Write your thoughts..."
+        [rows]="6"
+        autoGrow="true">
+      </ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Location</ion-label>
+      <div class="location-container">
+        <ion-text *ngIf="currentLocation">{{currentLocation}}</ion-text>
+        <ion-button fill="clear" (click)="getCurrentLocation()" [disabled]="isGettingLocation">
+          <ion-icon slot="start" name="locate"></ion-icon>
+          {{isGettingLocation ? 'Getting location...' : 'Get Current Location'}}
+        </ion-button>
+      </div>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Mood</ion-label>
+      <ion-select [(ngModel)]="entry.mood" placeholder="Select your mood">
+        <ion-select-option *ngFor="let mood of moodOptions" [value]="mood">
+          {{ mood }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Media Files Preview -->
+    <ion-list *ngIf="mediaFiles.length > 0">
+      <ion-item *ngFor="let file of mediaFiles; let i = index">
+        <!-- Preview for images -->
+        <img *ngIf="file.file_type === 'image'"
+            [src]="file.file_url"
+            alt="Preview"
+            style="max-width: 100px; margin-right: 10px;">
+
+        <!-- Preview for audio -->
+        <audio *ngIf="file.file_type === 'audio'" controls style="margin-right: 10px;">
+          <source [src]="file.file_url" type="audio/mpeg">
+        </audio>
+
+        <ion-label>{{ file.file_type === 'image' ? 'Photo' : 'Audio' }}</ion-label>
+        <ion-button
+          slot="end"
+          fill="clear"
+          color="danger"
+          (click)="removeMediaFile(i)">
+          <ion-icon name="trash"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+
+    <p></p>
+    <br>
+
+    <div class="image-buttons ion-padding-horizontal">
+      <ion-button expand="full" (click)="takePicture()" class="ion-margin-bottom">
+        <ion-icon name="camera" slot="start"></ion-icon>
+        Take Photo
+      </ion-button>
+
+      <ion-button expand="full" (click)="choosePicture()" class="ion-margin-bottom">
+        <ion-icon name="image" slot="start"></ion-icon>
+        Choose Photo
+      </ion-button>
+    </div>
+
+    <div class="mic-buttons ion-padding-horizontal">
+      <ion-button
+        expand="full"
+        (click)="toggleRecording()"
+        [color]="isRecording ? 'danger' : 'primary'"
+        class="ion-margin-bottom">
+        <ion-icon [name]="isRecording ? 'stop-circle' : 'mic'" slot="start"></ion-icon>
+        {{ isRecording ? 'Stop Recording' : 'Record Voice Message' }}
+      </ion-button>
+
+      <!-- Recording status -->
+      <div *ngIf="isRecording" class="recording-status">
+        <ion-text color="danger">Recording: {{ recordingDuration }}s</ion-text>
+      </div>
+    </div>
+
+    <!-- Save Button -->
+    <div class="save-buttons ion-padding">
+      <ion-button expand="block" (click)="saveEntry()" [disabled]="!entry.title">
+        Save Changes
+      </ion-button>
+    </div>
+  </ion-list>
+</ion-content>

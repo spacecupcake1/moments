@@ -188,10 +188,6 @@ export class EntriesService {
     );
   }
 
-
-
-
-
   async addEntry(entry: Entry): Promise<void> {
     try {
       // Create the entry first
@@ -256,18 +252,61 @@ export class EntriesService {
 
   async updateEntry(entry: Entry): Promise<void> {
     try {
+      // Create update object with only the fields that exist in the table
+      const updateData = {
+        title: entry.title,
+        content: entry.content,
+        mood: entry.mood,
+        updated_at: new Date().toISOString()
+      };
+
+      // Update the main entry first
       const { error } = await this.supabase
         .from('entries')
-        .update({
-          title: entry.title,
-          content: entry.content,
-          mood: entry.mood,
-          location_id: entry.location_id,
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', entry.id);
 
       if (error) throw error;
+
+      // Handle location if it exists
+      if (entry.location?.name) {
+        const { error: locationError } = await this.supabase
+          .from('locations')
+          .upsert({
+            name: entry.location.name,
+            entry: entry.id
+          });
+
+        if (locationError) throw locationError;
+      }
+
+      // Handle media files if they exist
+      if (entry.mediaFiles && entry.mediaFiles.length > 0) {
+        for (const mediaFile of entry.mediaFiles) {
+          // Only process new files that have tempFile
+          if (mediaFile.tempFile) {
+            try {
+              // Upload the file
+              const fileUrl = await this.uploadFile(
+                mediaFile.tempFile,
+                entry.id,
+                mediaFile.file_type
+              );
+
+              // Add the media file record
+              await this.addMediaFile(
+                entry.id,
+                fileUrl,
+                mediaFile.file_type
+              );
+            } catch (mediaError) {
+              console.error('Error processing media file:', mediaError);
+              throw mediaError;
+            }
+          }
+        }
+      }
+
       await this.loadEntries();
     } catch (error) {
       console.error('Error updating entry:', error);
@@ -277,36 +316,92 @@ export class EntriesService {
 
   async deleteEntry(entryId: number): Promise<void> {
     try {
-      // First delete any associated files from storage
-      const { data: mediaFiles } = await this.supabase
-        .from('media_files')
-        .select('file_url')
-        .eq('entry', entryId);
+      console.log('Starting deletion process for entry:', entryId);
 
-      if (mediaFiles) {
-        for (const mediaFile of mediaFiles) {
-          const filePath = mediaFile.file_url.split('/').pop();
-          if (filePath) {
-            await this.supabase.storage
-              .from('media')
-              .remove([`${entryId}/${filePath}`]);
+      // First, get the entry to check for associated data
+      const { data: entry } = await this.supabase
+        .from('entries')
+        .select(`
+          id,
+          media_files (id, file_url),
+          locations (id)
+        `)
+        .eq('id', entryId)
+        .single();
+
+      if (entry) {
+        // Delete media files from storage and database
+        if (entry.media_files && entry.media_files.length > 0) {
+          console.log('Deleting media files...');
+          for (const mediaFile of entry.media_files) {
+            // Delete file from storage
+            const filePath = mediaFile.file_url.split('/').pop();
+            if (filePath) {
+              const { error: storageError } = await this.supabase.storage
+                .from('media')
+                .remove([filePath]);
+
+              if (storageError) {
+                console.error('Error deleting file from storage:', storageError);
+              }
+            }
+
+            // Delete media file record
+            const { error: mediaError } = await this.supabase
+              .from('media_files')
+              .delete()
+              .eq('id', mediaFile.id);
+
+            if (mediaError) {
+              console.error('Error deleting media file record:', mediaError);
+            }
           }
         }
+
+        // Delete location records
+        if (entry.locations) {
+          console.log('Deleting location data...');
+          const { error: locationError } = await this.supabase
+            .from('locations')
+            .delete()
+            .eq('entry', entryId);
+
+          if (locationError) {
+            console.error('Error deleting location:', locationError);
+          }
+
+          // Delete geolocation if it exists
+          const { error: geoError } = await this.supabase
+            .from('geolocations')
+            .delete()
+            .eq('entry', entryId);
+
+          if (geoError) {
+            console.error('Error deleting geolocation:', geoError);
+          }
+        }
+
+        // Finally, delete the entry itself
+        console.log('Deleting main entry...');
+        const { error: entryError } = await this.supabase
+          .from('entries')
+          .delete()
+          .eq('id', entryId);
+
+        if (entryError) {
+          throw entryError;
+        }
+
+        // Refresh the entries list
+        await this.loadEntries();
+        console.log('Entry and all associated data deleted successfully');
       }
-
-      // Then delete the entry (cascade will handle related records)
-      const { error } = await this.supabase
-        .from('entries')
-        .delete()
-        .eq('id', entryId);
-
-      if (error) throw error;
-      await this.loadEntries();
     } catch (error) {
-      console.error('Error deleting entry:', error);
+      console.error('Error in deleteEntry:', error);
       throw error;
     }
   }
+
 
   async getEntry(entryId: number): Promise<Entry | null> {
     try {
@@ -327,35 +422,45 @@ export class EntriesService {
       if (!data) return null;
 
       const entryObj = new Entry();
+
+      // Copy basic entry properties
       Object.assign(entryObj, {
-        id: data.id,
-        title: data.title,
-        content: data.content,
-        created_at: data.created_at,
-        updated_at: data.updated_at,
-        mood: data.mood,
-        is_synced: data.is_synced,
-        offline_id: data.offline_id,
-        location_id: data.location_id
+        id: data.id || 0,  // Provide default values
+        title: data.title || '',
+        content: data.content || '',
+        created_at: data.created_at || new Date().toISOString(),
+        updated_at: data.updated_at || new Date().toISOString(),
+        mood: data.mood || '',
+        is_synced: data.is_synced || false,
+        offline_id: data.offline_id || null,
+        location_id: data.location_id || null
       });
 
-      // Format location
+      // Format media files with null check
+      entryObj.mediaFiles = data.media_files?.map((file: any) => {
+        const mediaFile = new MediaFile();
+        Object.assign(mediaFile, {
+          id: file.id || 0,
+          file_type: file.file_type || '',
+          file_url: file.file_url || '',
+          entry: file.entry || 0,
+          is_synced: file.is_synced || false
+        });
+        return mediaFile;
+      }) || [];
+
+      // Format location with null check
       if (data.locations) {
         const locationObj = new Location();
         const locationData = Array.isArray(data.locations) ? data.locations[0] : data.locations;
-        Object.assign(locationObj, {
-          id: locationData.id,
-          name: locationData.name
-        });
-        entryObj.location = locationObj;
+        if (locationData) {
+          Object.assign(locationObj, {
+            id: locationData.id || 0,
+            name: locationData.name || ''
+          });
+          entryObj.location = locationObj;
+        }
       }
-
-      // Format media files
-      entryObj.mediaFiles = data.media_files?.map((file: any) => {
-        const mediaFile = new MediaFile();
-        Object.assign(mediaFile, file);
-        return mediaFile;
-      }) || [];
 
       return entryObj;
     } catch (error) {

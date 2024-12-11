@@ -1,0 +1,71 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab1"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ entry?.title }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="editEntry()" color="primary">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="deleteEntry()" color="danger">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list *ngIf="entry">
+    <ion-item>
+      <ion-label>
+        <h2>Created At</h2>
+        <p>{{ entry.created_at | date:'dd. MMM yyyy, HH:mm' }}</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item *ngIf="entry.updated_at && entry.updated_at !== entry.created_at">
+      <ion-label>
+        <h2>Last Updated</h2>
+        <p>{{ entry.updated_at | date:'dd. MMM yyyy, HH:mm' }}</p>
+      </ion-label>
+    </ion-item>
+
+    <!-- Fixed location check -->
+    <ion-item *ngIf="entry.location?.name">
+      <ion-label>
+        <h2>Location</h2>
+        <p>{{ entry.location?.name }}</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item *ngIf="entry.mood">
+      <ion-label>
+        <h2>Mood</h2>
+        <p>{{ entry.mood }}</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item>
+      <ion-label class="ion-text-wrap">
+        <h2>Content</h2>
+        <p>{{ entry.content }}</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item *ngIf="entry.mediaFiles && entry.mediaFiles.length > 0">
+      <ion-label>
+        <h2>Media</h2>
+        <div class="media-container">
+          <div *ngFor="let media of entry.mediaFiles" class="media-item">
+            <img *ngIf="media.file_type === 'image'" [src]="media.file_url" alt="Entry image">
+            <audio *ngIf="media.file_type === 'audio'" controls>
+              <source [src]="media.file_url" type="audio/mpeg">
+            </audio>
+          </div>
+        </div>
+      </ion-label>
+    </ion-item>
+
+  </ion-list>
+</ion-content>
