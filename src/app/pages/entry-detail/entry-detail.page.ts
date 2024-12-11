@@ -12,9 +12,8 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonText,
   IonTitle,
-  IonToolbar,
+  IonToolbar
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
@@ -39,7 +38,6 @@ import { EntriesService } from 'src/services/entries.service';
     IonList,
     IonItem,
     IonLabel,
-    IonText,
   ]
 })
 export class EntryDetailPage implements OnInit {
