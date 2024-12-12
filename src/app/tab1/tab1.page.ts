@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, ToastController, LoadingController } from '@ionic/angular';
 import {
   IonContent,
   IonFab,
@@ -57,7 +57,8 @@ export class Tab1Page implements OnInit {
   constructor(
     private entriesService: EntriesService,
     private alertController: AlertController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private loadingController: LoadingController
   ) {}
 
   ngOnInit() {
@@ -108,10 +109,8 @@ export class Tab1Page implements OnInit {
 
   async handleSlide(event: any, entry: any) {
     const ratio = event.detail.ratio;
-
-    // When slide is more than 50% complete
+    
     if (ratio === 1) {
-      // Create and show alert
       const alert = await this.alertController.create({
         header: 'Confirm',
         message: 'Are you sure you want to delete this entry?',
@@ -120,44 +119,51 @@ export class Tab1Page implements OnInit {
             text: 'Cancel',
             role: 'cancel',
             handler: () => {
-              // Reset the slider
               event.target.closeOpened();
             }
           },
           {
             text: 'Delete',
             role: 'destructive',
-            handler: async () => {
-              try {
-                await this.entriesService.deleteEntry(entry.id);
-
-                const toast = await this.toastController.create({
-                  message: 'Entry deleted successfully',
-                  duration: 2000,
-                  position: 'bottom',
-                  color: 'success'
-                });
-                await toast.present();
-
-                // Refresh the entries list
-                this.loadEntries();
-              } catch (error) {
-                console.error('Error deleting entry:', error);
-
-                const toast = await this.toastController.create({
-                  message: 'Error deleting entry',
-                  duration: 2000,
-                  position: 'bottom',
-                  color: 'danger'
-                });
-                await toast.present();
-              }
+            handler: () => {
+              this.deleteEntryAndDismiss(event, entry, alert);
+              return false; // Prevents auto-dismiss
             }
           }
         ]
       });
-
+  
       await alert.present();
+    }
+  }
+  
+  private async deleteEntryAndDismiss(event: any, entry: any, alert: HTMLIonAlertElement) {
+    try {
+      await this.entriesService.deleteEntry(entry.id);
+      await alert.dismiss();
+      event.target.closeOpened();
+      
+      const toast = await this.toastController.create({
+        message: 'Entry deleted successfully',
+        duration: 2000,
+        position: 'bottom',
+        color: 'success'
+      });
+      await toast.present();
+      
+      // Refresh the entries list
+      await this.loadEntries();
+    } catch (error) {
+      console.error('Error deleting entry:', error);
+      await alert.dismiss();
+      
+      const toast = await this.toastController.create({
+        message: 'Error deleting entry',
+        duration: 2000,
+        position: 'bottom',
+        color: 'danger'
+      });
+      await toast.present();
     }
   }
 
