@@ -9,7 +9,7 @@ ion-header {
       text-align: center;
       font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
       font-style: italic;
-      font-size: 30px; // Makes the text bigger
+      font-size: 20px; // Makes the text bigger
       letter-spacing: 1px; // Adds some spacing between letters
       padding-top: 8px; // Adds some padding to center vertically
       text-transform: uppercase; // Makes it all caps for more impact
@@ -18,18 +18,43 @@ ion-header {
   }
 }
 
-// Tab bar customization
-ion-tab-bar {
-    --background: white;
-    
-    ion-tab-button {
-      --color: var(--ion-text-color);
-      --color-selected: var(--ion-color-primary);
-      
-      &.tab-selected {
-        ion-icon, ion-label {
-          color: var(--gradient-end);
-        }
-      }
-    }
+ion-back-button{
+  color: white;
+}
+
+.media-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.media-item {
+  flex: 1 1 300px;
+  max-width: 100%;
+
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  audio {
+    width: 100%;
+  }
+}
+
+ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+
+  h2 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+  }
 }

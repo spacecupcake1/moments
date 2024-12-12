@@ -1,56 +1,145 @@
-ion-content {
-    --background: #f4f4f4;
-  }
-  
-  ion-list {
-    background: transparent;
-    padding: 0;
-    margin-bottom: 16px;
-  }
-  
-  ion-item {
-    --padding-start: 0;
-    --background: transparent;
-    --border-color: rgba(0, 0, 0, 0.1);
-    margin-bottom: 16px;
-  }
-  
-  ion-label {
-    color: var(--ion-color-medium);
-    font-weight: 500;
-  }
-  
-  ion-textarea {
-    --background: #ffffff;
-    --padding-top: 8px;
-    --padding-bottom: 8px;
-    --padding-start: 8px;
-    --padding-end: 8px;
-    margin-top: 8px;
-    border-radius: 4px;
-  }
-  
-  ion-input {
-    --background: #ffffff;
-    --padding-start: 8px;
-    --padding-end: 8px;
-    margin-top: 8px;
-    border-radius: 4px;
-  }
-  
-  .media-buttons {
-    display: flex;
-    gap: 8px;
-    margin: 16px 0;
-  }
+ion-header {
+  ion-toolbar {
+    --background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    --min-height: 60px; // Makes the header slightly taller
 
-  .location-container {
-    width: 100%;
-    padding: 8px 0;
-    
-    ion-text {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--ion-color-medium);
+    ion-title {
+      color: white;
+      font-weight: 900;
+      text-align: center;
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      font-style: italic;
+      font-size: 20px; // Makes the text bigger
+      letter-spacing: 1px; // Adds some spacing between letters
+      padding-top: 8px; // Adds some padding to center vertically
+      text-transform: uppercase; // Makes it all caps for more impact
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); // Adds subtle shadow for better readability
     }
   }
+}
+
+ion-content {
+  --background: var(--ion-background-color);
+}
+
+ion-list {
+  background: transparent;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+ion-item {
+  --padding-start: 0;
+  --background: transparent;
+  --border-color: var(--ion-border-color);
+  margin-bottom: 16px;
+}
+
+ion-label {
+  color: var(--ion-text-color);
+  font-weight: 500;
+}
+
+ion-textarea {
+  --background: var(--ion-item-background);
+  --color: var(--ion-text-color);
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --padding-start: 8px;
+  --padding-end: 8px;
+  margin-top: 8px;
+  border-radius: 4px;
+}
+
+ion-input {
+  --background: var(--ion-item-background);
+  --color: var(--ion-text-color);
+  --padding-start: 8px;
+  --padding-end: 8px;
+  margin-top: 8px;
+  border-radius: 4px;
+}
+
+ion-back-button{
+  color: white;
+}
+
+.media-buttons {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.location-container {
+  width: 100%;
+  padding: 8px 0;
+
+  ion-text {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--ion-text-color);
+  }
+}
+
+.recording-status {
+  text-align: center;
+  margin: 10px 0;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.save-buttons {
+  ion-button {
+    --background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    --box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  }
+}
+
+/* Dark mode specific overrides */
+.dark {
+  ion-textarea, ion-input {
+    --background: var(--ion-item-background);
+    --color: var(--ion-text-color);
+  }
+
+  ion-item {
+    --border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .location-container ion-text {
+    color: var(--ion-text-color);
+  }
+
+  ion-button {
+    --background: var(--ion-toolbar-background);
+    --color: var(--ion-text-color);
+  }
+}
+
+/* Style for ion-select in dark mode */
+.dark ion-select {
+  --placeholder-color: var(--ion-text-color);
+  --placeholder-opacity: 0.7;
+}
+
+/* Style for ion-select-option in dark mode */
+.dark ion-select-option {
+  background-color: var(--ion-item-background);
+  color: var(--ion-text-color);
+}
+
+/* Back button color adjustment for dark mode */
+.dark ion-back-button {
+  --color: var(--ion-text-color);
+}

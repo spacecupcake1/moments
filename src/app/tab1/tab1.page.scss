@@ -2,12 +2,12 @@ ion-header {
   ion-toolbar {
     --background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
     --min-height: 60px; // Makes the header slightly taller
-    
+
     ion-title {
       color: white;
       font-weight: 900;
       text-align: center;
-      font-family: 'Courier New', Courier, monospace;
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
       font-style: italic;
       font-size: 30px; // Makes the text bigger
       letter-spacing: 1px; // Adds some spacing between letters
@@ -23,12 +23,12 @@ ion-item {
   &.filter-item {
     --background: transparent;
     --border-color: rgba(99, 102, 241, 0.2);
-    
+
     ion-label {
       color: var(--ion-text-color);
       opacity: 0.7;
     }
-    
+
     ion-select {
       --placeholder-color: var(--ion-text-color);
       --placeholder-opacity: 1;
@@ -40,20 +40,20 @@ ion-item {
 .entry-item {
   margin-bottom: 1px;
   border-bottom: 1px solid rgba(99, 102, 241, 0.1);
-  
+
   .date-location {
     color: var(--ion-text-color);
     opacity: 0.6;
     font-size: 14px;
   }
-  
+
   .entry-title {
     color: var(--ion-text-color);
     font-size: 18px;
     font-weight: 500;
     margin: 4px 0;
   }
-  
+
   .media-type {
     color: var(--ion-color-primary);
     font-size: 14px;
@@ -70,11 +70,11 @@ ion-fab-button {
 // Tab bar customization
 ion-tab-bar {
   --background: white;
-  
+
   ion-tab-button {
     --color: var(--ion-text-color);
     --color-selected: var(--ion-color-primary);
-    
+
     &.tab-selected {
       ion-icon, ion-label {
         color: var(--gradient-end);
