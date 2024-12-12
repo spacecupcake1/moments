@@ -137,11 +137,28 @@ h2 {
   }
 
   .chart-container {
-    height: 300px;
+    min-height: 100px;  // Minimum height to ensure visibility
+    height: auto;       // Let height adapt to content
     margin-top: 16px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     overflow: hidden;
+    padding: 16px;     // Add some padding around charts
+
+    // Specific height for line chart (weekly activity)
+    &.line-chart {
+      height: 200px;
+    }
+
+    // Specific height for pie chart (media usage)
+    &.pie-chart {
+      height: 300px;  // Taller to accommodate legend
+    }
+
+    // Specific height for bar chart (location)
+    &.bar-chart {
+      height: 250px;
+    }
   }
 
   // Group stats in a grid for better space usage

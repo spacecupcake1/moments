@@ -8,7 +8,6 @@
   <div class="stats-section">
     <h2>Entry Statistics</h2>
     
-    <div class="stats-grid">
       <div class="stat-item">
         <div class="stat-label">Total Entries</div>
         <div class="stat-value">{{ totalEntries }}</div>
@@ -23,7 +22,6 @@
         <div class="stat-label">Most Active Day</div>
         <div class="stat-value">{{ mostActiveDay }}</div>
       </div>
-    </div>
 
     <div class="chart-container">
       <app-weekly-chart [weeklyData]="weeklyData"></app-weekly-chart>
@@ -33,7 +31,6 @@
   <div class="stats-section">
     <h2>Media Usage</h2>
     
-    <div class="stats-grid">
       <div class="stat-item">
         <div class="stat-label">Photos</div>
         <div class="stat-value">{{ photoCount }} entries</div>
@@ -47,7 +44,7 @@
       <div class="stat-item">
         <div class="stat-label">Entries with Media</div>
         <div class="stat-value">{{ entriesWithMediaPercentage }}%</div>
-      </div>
+
     </div>
 
     <div class="chart-container">
@@ -58,7 +55,6 @@
   <div class="stats-section">
     <h2>Location Analysis</h2>
     
-    <div class="stats-grid">
       <div class="stat-item">
         <div class="stat-label">Entries with Location</div>
         <div class="stat-value">{{ entriesWithLocation }} ({{ locationPercentage }}%)</div>
@@ -67,7 +63,7 @@
       <div class="stat-item">
         <div class="stat-label">Most Common Area</div>
         <div class="stat-value">{{ mostCommonArea }}</div>
-      </div>
+
     </div>
 
     <div class="chart-container">
