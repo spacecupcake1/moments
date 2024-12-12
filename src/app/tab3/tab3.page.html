@@ -30,10 +30,12 @@
     <ion-item>
       <ion-label>Notification Time</ion-label>
       <ion-datetime
+        class="custom-datetime"
         display-format="HH:mm"
         [value]="selectedTime"
         (ionChange)="onTimeChange($event)"
-        presentation="time">
+        presentation="time"
+        color="primary">
       </ion-datetime>
     </ion-item>
 
@@ -46,33 +48,3 @@
     </ion-item>
   </ion-list>
 </ion-content>
-
-    <!-- Notifications Toggle
-    <ion-item>
-      <ion-label>Notifications</ion-label>
-      <ion-toggle
-        [(ngModel)]="notifications"
-        slot="end">
-      </ion-toggle>
-    </ion-item> -->
-
-    <!-- Time Picker
-    <ion-item>
-      <ion-label>Time</ion-label>
-      <ion-datetime
-        display-format="HH:mm"
-        picker-format="HH:mm"
-        [(ngModel)]="selectedTime"
-        (ionChange)="onTimeChange($event)">
-      </ion-datetime>
-    </ion-item> -->
-
-    <!-- Offline Status
-    <ion-item>
-      <ion-label>Offline Status</ion-label>
-      <ion-button
-        fill="clear"
-        (click)="checkSyncStatus()">
-        <ion-label>{{ syncStatus }}</ion-label>
-      </ion-button>
-    </ion-item> -->

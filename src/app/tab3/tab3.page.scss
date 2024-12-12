@@ -33,3 +33,43 @@ ion-tab-bar {
       }
     }
 }
+
+// Custom datetime styles
+ion-datetime {
+  --background: var(--ion-background-color);
+  --wheel-highlight-background: var(--ion-background-color);
+  --wheel-highlight-background-opacity: 1;
+  --wheel-fade-background-rgb: var(--ion-background-color-rgb);
+  --wheel-item-color: var(--ion-text-color);
+  --wheel-item-font-size: 22px;
+  border-radius: 8px;
+}
+
+// Target dark mode specifically
+.dark {
+  ion-datetime {
+    --background: var(--ion-background-color);
+    --wheel-highlight-background: var(--ion-color-step-150);
+    --wheel-item-color: var(--ion-text-color);
+    
+    &::part(wheel-item) {
+      color: var(--ion-text-color);
+    }
+    
+    &::part(time-button) {
+      background: var(--ion-background-color);
+      color: var(--ion-text-color);
+    }
+  }
+}
+
+// Additional styles for the time picker overlay
+.picker-wrapper.sc-ion-picker-md {
+  background: var(--ion-background-color);
+  
+  .picker-above-highlight,
+  .picker-below-highlight {
+    background: transparent;
+    border: none;
+  }
+}
