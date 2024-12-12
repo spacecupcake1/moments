@@ -11,6 +11,7 @@ import { camera, image, locate, mic, stopCircle, trash } from 'ionicons/icons';
 import { Entry } from 'src/app/data/entry';
 import { MediaFile } from 'src/app/data/media_files';
 import { EntriesService } from 'src/services/entries.service';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-edit-entry',
@@ -33,7 +34,8 @@ export class EditEntryPage implements OnInit {
     private entriesService: EntriesService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private navCtrl: NavController
   ) {
     addIcons({ camera, image, locate, mic, stopCircle, trash });
   }
@@ -59,45 +61,6 @@ export class EditEntryPage implements OnInit {
       }
     } catch (error) {
       console.error('Error loading entry:', error);
-    }
-  }
-
-  async saveEntry() {
-    try {
-      // Set the location if it exists
-      if (this.currentLocation) {
-        const locationId = this.entry.location?.id;
-        this.entry.location = {
-          id: locationId || 0,
-          name: this.currentLocation
-        };
-      }
-
-      this.entry.mediaFiles = this.mediaFiles;
-
-      // Update the entry
-      await this.entriesService.updateEntry(this.entry);
-
-      // Show success message
-      const toast = await this.toastController.create({
-        message: 'Entry updated successfully',
-        duration: 2000,
-        position: 'bottom',
-        color: 'success'
-      });
-      await toast.present();
-
-      this.router.navigate(['/entry-detail', this.entry.id]);
-    } catch (error) {
-      // Show error message
-      const toast = await this.toastController.create({
-        message: 'Error updating entry',
-        duration: 2000,
-        position: 'bottom',
-        color: 'danger'
-      });
-      await toast.present();
-      console.error('Error updating entry:', error);
     }
   }
 
@@ -228,8 +191,73 @@ export class EditEntryPage implements OnInit {
     }
   }
 
-  removeMediaFile(index: number) {
-    this.mediaFiles.splice(index, 1);
+  // edit-entry.page.ts
+  async removeMediaFile(index: number) {
+    const mediaFile = this.mediaFiles[index];
+    
+    // If the file has an ID (existing file), delete it from the database
+    if (mediaFile.id) {
+      try {
+        await this.entriesService.deleteMediaFile(mediaFile.id);
+        this.mediaFiles.splice(index, 1);
+
+        const toast = await this.toastController.create({
+          message: 'Media file deleted successfully',
+          duration: 2000,
+          position: 'bottom',
+          color: 'success'
+        });
+        await toast.present();
+      } catch (error) {
+        console.error('Error deleting media file:', error);
+        const toast = await this.toastController.create({
+          message: 'Error deleting media file',
+          duration: 2000,
+          position: 'bottom',
+          color: 'danger'
+        });
+        await toast.present();
+      }
+    } else {
+      // If it's a new file that hasn't been saved yet, just remove it from the array
+      this.mediaFiles.splice(index, 1);
+    }
+  }
+
+  async saveEntry() {
+    try {
+      if (this.currentLocation) {
+        const locationId = this.entry.location?.id;
+        this.entry.location = {
+          id: locationId || 0,
+          name: this.currentLocation
+        };
+      }
+
+      this.entry.mediaFiles = this.mediaFiles;
+
+      await this.entriesService.updateEntry(this.entry);
+
+      const toast = await this.toastController.create({
+        message: 'Entry updated successfully',
+        duration: 2000,
+        position: 'bottom',
+        color: 'success'
+      });
+      await toast.present();
+
+      // Use Location back() to return to the previous page
+      window.history.back();
+    } catch (error) {
+      const toast = await this.toastController.create({
+        message: 'Error updating entry',
+        duration: 2000,
+        position: 'bottom',
+        color: 'danger'
+      });
+      await toast.present();
+      console.error('Error updating entry:', error);
+    }
   }
 
   // Clean up when leaving the page

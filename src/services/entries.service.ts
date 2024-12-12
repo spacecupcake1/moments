@@ -469,7 +469,7 @@ export class EntriesService {
         .select('file_url')
         .eq('id', mediaFileId)
         .single();
-
+  
       if (mediaFile) {
         // Delete from storage
         const filePath = mediaFile.file_url.split('/').pop();
@@ -478,18 +478,22 @@ export class EntriesService {
             .from('media')
             .remove([filePath]);
         }
-
+  
         // Delete from database
         const { error } = await this.supabase
           .from('media_files')
           .delete()
           .eq('id', mediaFileId);
-
+  
         if (error) throw error;
+  
+        // Reload entries to update the data
+        await this.loadEntries();
       }
     } catch (error) {
       console.error('Error deleting media file:', error);
       throw error;
     }
   }
+
 }
