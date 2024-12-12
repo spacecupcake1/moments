@@ -34,8 +34,7 @@ import {
   micOutline,
   stopCircleOutline,
   trashOutline,
-  warningOutline
-} from 'ionicons/icons';
+  warningOutline, locate } from 'ionicons/icons';
 import { Entry } from 'src/app/data/entry';
 import { Location } from 'src/app/data/location';
 import { MediaFile } from 'src/app/data/media_files';

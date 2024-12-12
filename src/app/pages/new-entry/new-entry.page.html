@@ -27,8 +27,9 @@
     <ion-item>
       <ion-label position="stacked">Location</ion-label>
       <div class="location-container">
+        <br>
         <ion-text *ngIf="currentLocation">{{currentLocation}}</ion-text>
-        <ion-button fill="clear" (click)="getCurrentLocation()" [disabled]="isGettingLocation">
+        <ion-button fill="clear" shape="round" (click)="getCurrentLocation()" [disabled]="isGettingLocation">
           <ion-icon slot="start" name="locate"></ion-icon>
           {{isGettingLocation ? 'Getting location...' : 'Get Current Location'}}
         </ion-button>
@@ -44,38 +45,34 @@
         </ion-select-option>
       </ion-select>
     </ion-item>
+
     <!-- Media Files Section -->
     <ion-item lines="none">
       <ion-label>Media Files</ion-label>
     </ion-item>
 
     <div class="image-buttons ion-padding-horizontal">
-      <ion-button expand="full" (click)="takePicture()" class="ion-margin-bottom">
+      <ion-button expand="full" shape="round" (click)="takePicture()" class="ion-margin-bottom">
         <ion-icon name="camera" slot="start"></ion-icon>
         Take Photo
       </ion-button>
 
-      <ion-button expand="full" (click)="choosePicture()" class="ion-margin-bottom">
+      <ion-button expand="full" shape="round" (click)="choosePicture()" class="ion-margin-bottom">
         <ion-icon name="image" slot="start"></ion-icon>
         Choose Photo
       </ion-button>
     </div>
 
     <div class="mic-buttons ion-padding-horizontal">
-
       <ion-button
         expand="full"
+        shape="round"
         (click)="toggleRecording()"
         [color]="isRecording ? 'danger' : 'primary'"
         class="ion-margin-bottom">
         <ion-icon [name]="isRecording ? 'stop-circle' : 'mic'" slot="start"></ion-icon>
         {{ isRecording ? 'Stop Recording' : 'Record Voice Message' }}
       </ion-button>
-
-      <!-- Recording status -->
-      <div *ngIf="isRecording" class="recording-status">
-        <ion-text color="danger">Recording: {{ recordingDuration }}s</ion-text>
-      </div>
     </div>
 
     <!-- Media Files Preview -->
@@ -98,9 +95,10 @@
 
     <!-- Save Button -->
     <div class="save-buttons ion-padding">
-      <ion-button expand="block" (click)="saveEntry()" [disabled]="!entry.title">
+      <ion-button expand="block" shape="round" (click)="saveEntry()" [disabled]="!entry.title">
         Save Entry
       </ion-button>
     </div>
+
   </ion-list>
 </ion-content>

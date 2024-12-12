@@ -27,6 +27,7 @@
     <ion-item>
       <ion-label position="stacked">Location</ion-label>
       <div class="location-container">
+        <br>
         <ion-text *ngIf="currentLocation">{{currentLocation}}</ion-text>
         <ion-button fill="clear" (click)="getCurrentLocation()" [disabled]="isGettingLocation">
           <ion-icon slot="start" name="locate"></ion-icon>
@@ -73,12 +74,12 @@
     <br>
 
     <div class="image-buttons ion-padding-horizontal">
-      <ion-button expand="full" (click)="takePicture()" class="ion-margin-bottom">
+      <ion-button expand="full" shape="round" (click)="takePicture()" class="ion-margin-bottom">
         <ion-icon name="camera" slot="start"></ion-icon>
         Take Photo
       </ion-button>
 
-      <ion-button expand="full" (click)="choosePicture()" class="ion-margin-bottom">
+      <ion-button expand="full" shape="round" (click)="choosePicture()" class="ion-margin-bottom">
         <ion-icon name="image" slot="start"></ion-icon>
         Choose Photo
       </ion-button>
@@ -87,6 +88,7 @@
     <div class="mic-buttons ion-padding-horizontal">
       <ion-button
         expand="full"
+        shape="round"
         (click)="toggleRecording()"
         [color]="isRecording ? 'danger' : 'primary'"
         class="ion-margin-bottom">
