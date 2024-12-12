@@ -1,4 +1,27 @@
-/* entry-detail.page.scss */
+ion-header {
+  ion-toolbar {
+    --background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    --min-height: 60px; // Makes the header slightly taller
+
+    ion-title {
+      color: white;
+      font-weight: 900;
+      text-align: center;
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      font-style: italic;
+      font-size: 20px; // Makes the text bigger
+      letter-spacing: 1px; // Adds some spacing between letters
+      padding-top: 8px; // Adds some padding to center vertically
+      text-transform: uppercase; // Makes it all caps for more impact
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); // Adds subtle shadow for better readability
+    }
+  }
+}
+
+ion-back-button{
+  color: white;
+}
+
 .media-container {
   display: flex;
   flex-wrap: wrap;
