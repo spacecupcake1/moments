@@ -18,7 +18,11 @@ import {
   IonSelect,
   IonSelectOption,
   IonTitle,
-  IonToolbar
+  IonToolbar,
+  IonText,
+  IonGrid,
+  IonRow,
+  IonCol
 } from '@ionic/angular/standalone';
 import { EntriesService } from 'src/services/entries.service';
 import { Entry } from '../data/entry';
@@ -43,7 +47,11 @@ import { Entry } from '../data/entry';
     IonList,
     IonFab,
     IonFabButton,
-    IonIcon
+    IonIcon,
+    IonText,
+    IonGrid,
+    IonRow,
+    IonCol
   ]
 })
 export class Tab1Page implements OnInit {

@@ -5,26 +5,42 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item class="filter-item">
-      <ion-label>Datum</ion-label>
-      <ion-select [(ngModel)]="dateFilter" (ionChange)="applyFilters()">
-        <ion-select-option [value]="null">Alle</ion-select-option>
-        <ion-select-option *ngFor="let date of availableDates" [value]="date">
-          {{ date | date:'dd. MMM yyyy' }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
+    <ion-list>
 
-    <ion-item class="filter-item">
-      <ion-label>Ort</ion-label>
-      <ion-select [(ngModel)]="locationFilter" (ionChange)="applyFilters()">
-        <ion-select-option [value]="null">Alle</ion-select-option>
-        <ion-select-option *ngFor="let location of availableLocations" [value]="location">
-          {{ location }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
+      <ion-grid>
+        <ion-row>
+          <!-- Date Filter -->
+          <ion-col size="6">
+            <ion-item class="filter-item">
+              <ion-select [(ngModel)]="dateFilter" (ionChange)="applyFilters()" placeholder="Select Date">
+                <div slot="label">
+                  Date
+                </div>
+                <ion-select-option [value]="null">All</ion-select-option>
+                <ion-select-option *ngFor="let date of availableDates" [value]="date">
+                  {{ date | date:'dd. MMM yyyy' }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+      
+          <!-- Location Filter -->
+          <ion-col size="6">
+            <ion-item class="filter-item">
+              <ion-select [(ngModel)]="locationFilter" (ionChange)="applyFilters()" placeholder="Select Location">
+                <div slot="label">
+                  Location
+                </div>
+                <ion-select-option [value]="null">All</ion-select-option>
+                <ion-select-option *ngFor="let location of availableLocations" [value]="location">
+                  {{ location }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      
 
     <ion-item-sliding *ngFor="let entry of filteredEntries" (ionDrag)="handleSlide($event, entry)">
       <ion-item class="entry-item" [routerLink]="['/entry', entry.id.toString()]">

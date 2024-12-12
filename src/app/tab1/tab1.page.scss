@@ -69,7 +69,6 @@ ion-fab-button {
 
 // Tab bar customization
 ion-tab-bar {
-  --background: white;
 
   ion-tab-button {
     --color: var(--ion-text-color);
@@ -81,4 +80,29 @@ ion-tab-bar {
       }
     }
   }
+}
+
+.filter-item {
+  background: var(--ion-background-color); /* Light background for the filter */
+  color: var(--ion-text-color); /* Dark text color for readability */
+  border-radius: 8px; /* Rounded corners for the items */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for emphasis */
+  margin: 0 8px; /* Add spacing between filters */
+}
+
+.filter-item ion-select {
+  font-size: 1rem; /* Slightly larger font for emphasis */
+}
+
+ion-row {
+  justify-content: space-between; /* Space the two filters evenly */
+  margin: 8px 0; /* Add vertical spacing around the filter row */
+}
+
+ion-grid {
+  padding: 8px; /* Padding around the grid for better alignment */
+}
+
+ion-select-option{
+  color: var(--ion-text-color);
 }
