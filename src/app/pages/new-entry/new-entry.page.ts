@@ -185,7 +185,6 @@ export class NewEntryPage {
         mediaFile.file_type = 'image';
         mediaFile.file_path = fileName;
         mediaFile.tempFile = file;
-        mediaFile.is_synced = false;
 
         this.mediaFiles.push(mediaFile);
       }
@@ -238,7 +237,6 @@ export class NewEntryPage {
         mediaFile.file_type = 'image';
         mediaFile.file_path = file.name;
         mediaFile.tempFile = file;
-        mediaFile.is_synced = false;
 
         this.mediaFiles.push(mediaFile);
       }
@@ -319,7 +317,6 @@ export class NewEntryPage {
         mediaFile.file_type = 'audio';
         mediaFile.file_path = file.name;
         mediaFile.tempFile = file;
-        mediaFile.is_synced = false;
 
         this.mediaFiles.push(mediaFile);
         await this.showSuccessToast('Voice message recorded successfully');
