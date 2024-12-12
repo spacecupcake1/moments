@@ -5,7 +5,5 @@ export class MediaFile {
   public file_url?: string;
   public file_path?: string;
   public created_at: string = '';
-  public is_synced: boolean = false;
-  public offline_storage_path?: string;
   public tempFile?: File;
 }

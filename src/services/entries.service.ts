@@ -97,8 +97,7 @@ export class EntriesService {
         .insert({
           entry: entryId,
           file_type: fileType,
-          file_url: fileUrl,
-          is_synced: true
+          file_url: fileUrl
         });
 
       if (error) throw error;
@@ -140,8 +139,6 @@ export class EntriesService {
           created_at: entry.created_at,
           updated_at: entry.updated_at,
           mood: entry.mood,
-          is_synced: entry.is_synced,
-          offline_id: entry.offline_id,
           location_id: entry.location_id
         });
 
@@ -196,8 +193,7 @@ export class EntriesService {
         .insert({
           title: entry.title,
           content: entry.content,
-          mood: entry.mood,
-          is_synced: true
+          mood: entry.mood
         })
         .select()
         .single();
@@ -431,8 +427,6 @@ export class EntriesService {
         created_at: data.created_at || new Date().toISOString(),
         updated_at: data.updated_at || new Date().toISOString(),
         mood: data.mood || '',
-        is_synced: data.is_synced || false,
-        offline_id: data.offline_id || null,
         location_id: data.location_id || null
       });
 
@@ -443,8 +437,7 @@ export class EntriesService {
           id: file.id || 0,
           file_type: file.file_type || '',
           file_url: file.file_url || '',
-          entry: file.entry || 0,
-          is_synced: file.is_synced || false
+          entry: file.entry || 0
         });
         return mediaFile;
       }) || [];
@@ -476,7 +469,7 @@ export class EntriesService {
         .select('file_url')
         .eq('id', mediaFileId)
         .single();
-
+  
       if (mediaFile) {
         // Delete from storage
         const filePath = mediaFile.file_url.split('/').pop();
@@ -485,18 +478,22 @@ export class EntriesService {
             .from('media')
             .remove([filePath]);
         }
-
+  
         // Delete from database
         const { error } = await this.supabase
           .from('media_files')
           .delete()
           .eq('id', mediaFileId);
-
+  
         if (error) throw error;
+  
+        // Reload entries to update the data
+        await this.loadEntries();
       }
     } catch (error) {
       console.error('Error deleting media file:', error);
       throw error;
     }
   }
+
 }

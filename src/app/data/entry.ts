@@ -8,8 +8,6 @@ export class Entry {
     public created_at: string = '';
     public updated_at: string = '';
     public mood?: string;
-    public is_synced: boolean = false;
-    public offline_id?: string;
     public location_id?: number;
     public location?: Location;
     public mediaFiles: MediaFile[] = [];
