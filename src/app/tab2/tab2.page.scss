@@ -33,3 +33,129 @@ ion-tab-bar {
       }
     }
 }
+
+ion-content {
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+
+// Dark mode specific styles
+:host-context(.dark) {
+  .stats-section {
+    background: rgba(30, 30, 30, 0.6);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .stat-value {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+// Light mode specific styles
+:host-context(.light), :host {
+  .stats-section {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .stat-value {
+    color: var(--ion-color-medium);
+  }
+}
+
+
+
+
+// Section headers
+h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 24px 0 16px 0;
+  color: var(--ion-text-color);
+}
+
+// Stats sections
+.stats-section {
+  background: var(--ion-color-light);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--ion-color-light-shade);
+}
+
+// Stats items
+.stat-item {
+  margin-bottom: 20px;
+
+  .stat-label {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: var(--ion-text-color);
+  }
+
+  .stat-value {
+    color: var(--ion-color-medium);
+    margin-left: 8px;
+  }
+}
+
+.stats-section {
+  background: var(--ion-color-light);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px; // Reduced margin between sections
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: var(--ion-text-color);
+  }
+
+  .stat-item {
+    margin-bottom: 12px; // Reduced space between stat items
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .stat-label {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--ion-text-color);
+    }
+
+    .stat-value {
+      color: var(--ion-color-medium);
+      margin-top: 4px;
+    }
+  }
+
+  .chart-container {
+    height: 300px;
+    margin-top: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  // Group stats in a grid for better space usage
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+}
+
+// Adjust spacing for the last section
+.stats-section:last-child {
+  margin-bottom: 80px; // Space for tab bar
+}
+
+

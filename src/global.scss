@@ -64,4 +64,13 @@ ion-datetime {
       background: var(--ion-background-color);
     }
   }
+
+  .stats-section {
+    background: rgba(30, 30, 30, 0.6);
+  }
+
+  .stat-value {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
 }
