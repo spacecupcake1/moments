@@ -3,7 +3,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/spacecupcake1/momentse">
-    <img src="resources\file.png" alt="Logo" width="200" height="200">
+    <img src="resources\icon.png" alt="Logo" width="200" height="200">
   </a>
 
   <h3 align="center">Moments</h3>
