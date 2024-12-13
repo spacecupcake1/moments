@@ -9,6 +9,21 @@
 
 Moments ist eine moderne Tagebuch-App, die es Nutzern ermöglicht, ihre persönlichen Erlebnisse und Gedanken in verschiedenen Medienformaten festzuhalten. Die App wurde entwickelt, um das traditionelle Tagebuchschreiben in das digitale Zeitalter zu bringen.
 
+## Inhaltsverzeichnis
+
+1. [🎯 Hauptfunktionen](#-hauptfunktionen)
+2. [🛠️ Entwickelt mit](#%EF%B8%8F-entwickelt-mit)
+3. [📱 Genutzte Geräteschnittstellen](#-genutzte-ger%C3%A4teschnittstellen)
+4. [🚀 Installation & Setup](#-installation--setup)
+   - [Voraussetzungen](#voraussetzungen)
+   - [Installation](#installation)
+   - [Build-Prozess](#build-prozess)
+5. [📱 App-Struktur](#-app-struktur)
+   - [Tabs](#tabs)
+   - [Pages](#pages)
+6. [🔒 Datenschutz & Sicherheit](#-datenschutz--sicherheit)
+
+
 ## 🎯 Hauptfunktionen
 
 - **Multimediale Einträge**: Text, Fotos und Audioaufnahmen
@@ -44,7 +59,6 @@ Moments ist eine moderne Tagebuch-App, die es Nutzern ermöglicht, ihre persönl
   npm install -g @ionic/cli
   ```
 - Android Studio (für Android-Entwicklung)
-- Xcode (für iOS-Entwicklung, nur macOS)
 
 ### Installation
 
@@ -68,24 +82,13 @@ Moments ist eine moderne Tagebuch-App, die es Nutzern ermöglicht, ihre persönl
    ionic serve
    ```
 
-### Build-Prozess
-
-#### Android
+### Build-Prozess (Android)
 
 ```bash
 ionic build
 npx cap add android
 npx cap sync
 npx cap open android
-```
-
-#### iOS (nur macOS)
-
-```bash
-ionic build
-npx cap add ios
-npx cap sync
-npx cap open ios
 ```
 
 ---
