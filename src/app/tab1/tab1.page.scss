@@ -92,6 +92,8 @@ ion-tab-bar {
 
 .filter-item ion-select {
   font-size: 1rem; /* Slightly larger font for emphasis */
+  background: var(--ion-background-color); /* Light background for the filter */
+  color: var(--ion-text-color); /* Dark text color for readability */
 }
 
 ion-row {

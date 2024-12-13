@@ -10,9 +10,20 @@
 <ion-content class="ion-padding">
   <ion-list>
     <ion-item>
-      <ion-label position="stacked">Title</ion-label>
-      <ion-input [(ngModel)]="entry.title" placeholder="Enter title" required></ion-input>
+      <ion-label position="stacked">Title <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input 
+        [(ngModel)]="entry.title" 
+        name="title"
+        #title="ngModel"
+        placeholder="Enter title" 
+        required>
+      </ion-input>
     </ion-item>
+    <div *ngIf="title.invalid && (title.dirty || title.touched)" class="error-message" style="font-size: small;">
+      <ion-text color="danger" *ngIf="title.errors?.['required']">
+        Title is required
+      </ion-text>
+    </div>
 
     <ion-item>
       <ion-label position="stacked">Content</ion-label>
@@ -48,7 +59,7 @@
 
     <!-- Media Files Section -->
     <ion-item lines="none">
-      <ion-label>Media Files</ion-label>
+      <ion-label position="stacked">Media Files</ion-label>
     </ion-item>
 
     <div class="image-buttons ion-padding-horizontal">
