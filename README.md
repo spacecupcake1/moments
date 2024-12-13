@@ -37,7 +37,7 @@ Moments ist eine moderne Tagebuch-App, die es Nutzern ermöglicht, ihre persönl
 - [Ionic Framework](https://ionicframework.com/) - UI-Komponenten und App-Entwicklung
 - [Angular](https://angular.io/) - Frontend Framework
 - [Capacitor](https://capacitorjs.com/) - Native App-Funktionen
-- [Supabase](https://supabase.com/) - Backend und Datenbank
+- [Supabase](https://supabase.com/) - Datenbank
 
 ## 📱 Genutzte Geräteschnittstellen
 
